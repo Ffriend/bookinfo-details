@@ -1,0 +1,6 @@
+services:
+  details:
+    build: .
+    image: ghcr.io/ffriend/bookinfo-details:dev
+    ports:
+      - "8080:8080"
