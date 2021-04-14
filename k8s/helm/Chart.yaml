@@ -1,0 +1,11 @@
+apiVersion: v1
+description: Bookinfo Details Service Helm Chart
+name: bookinfo-details
+version: 1.0.0
+appVersion: 1.0.0
+home: https://bookinfo.dev.opsta.net/student92/details
+maintainers:
+  - name: student92
+    email: devop092@mail.kmutt.ac.th
+sources:
+  - https://github.com/ffriend/bookinfo-details
