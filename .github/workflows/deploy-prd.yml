@@ -1,0 +1,44 @@
+name: deploy-prd
+on:
+  workflow_dispatch:
+    inputs:
+      deploy-version:
+        description: 'Version to deploy'
+        required: true
+jobs:
+  deploy-prd:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: refs/tags/${{ github.event.inputs.deploy-version }}
+      - name: get-credentials
+        uses: google-github-actions/get-gke-credentials@main
+        with:
+          cluster_name: k8s
+          location: asia-southeast1-a
+          credentials: ${{ secrets.GKE_CREDENTIALS }}
+      - name: deploy
+        uses: deliverybot/helm@v1
+        with:
+          helm: helm3
+          release: bookinfo-prd-ratings
+          namespace: student92-bookinfo-prd
+          chart: k8s/helm
+          value-files: k8s/helm-values/values-bookinfo-prd-details.yaml
+          values: |
+            {
+              "ratings": {
+                "tag": "${{ github.event.inputs.deploy-version }}"
+              },
+              "extraEnv": {
+                "COMMIT_SHA": "${{ github.sha }}"
+              }
+            }
+  acceptance-test:
+    needs: deploy-prd
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Check health check page
+        run: curl http://bookinfo.${{ env.ENV_NAME }}.opsta.net/student92/ratings/health | grep "Ratings is working!!!"

@@ -31,7 +31,7 @@ trap 'INT' do server.shutdown end
 
 server.mount_proc '/health' do |req, res|
     res.status = 200
-    res.body = {'status' => 'Details is healthy'}.to_json
+    res.body = {'status' => 'Details is working!!!'}.to_json
     res['Content-Type'] = 'application/json'
 end
 
